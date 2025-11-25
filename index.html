@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biometric Platform - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🔐 Biometric Platform</h1>
+                <p>Secure Authentication Portal</p>
+            </div>
+            
+            <!-- Standard Login Form -->
+            <form id="loginForm" class="login-form" style="display: block;">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="admin@platform.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="rememberMe" style="width: auto;">
+                    <label for="rememberMe" style="margin: 0; cursor: pointer;">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Sign In</button>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+                
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="#" id="forgotPasswordLink" style="font-size: 12px; color: var(--color-primary);">Forgot Password?</a>
+                </div>
+                
+                <div style="margin: 24px 0; text-align: center; color: var(--color-text-secondary); font-size: 12px;">
+                    <span>OR</span>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn--outline" style="flex: 1; gap: 8px;" id="googleLoginBtn">
+                        <span>🔵</span> Google
+                    </button>
+                    <button type="button" class="btn btn--outline" style="flex: 1; gap: 8px;" id="facebookLoginBtn">
+                        <span>🔷</span> Facebook
+                    </button>
+                </div>
+                
+                <button type="button" class="btn btn--secondary btn--full-width" style="margin-top: 12px;" id="magicLinkBtn">
+                    ✉️ Send Magic Link
+                </button>
+                
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="#" id="altLoginMethodsLink" style="font-size: 12px; color: var(--color-primary);">View Alternative Login Methods</a>
+                </div>
+            </form>
+            
+            <!-- 2FA Verification -->
+            <div id="twoFAForm" class="login-form" style="display: none;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">Two-Factor Authentication</h3>
+                    <p style="font-size: 12px; color: var(--color-text-secondary);">Enter the 6-digit code from your authenticator app</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="twoFACode">Authentication Code</label>
+                    <input type="text" id="twoFACode" class="form-control" placeholder="123456" maxlength="6" required>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="rememberDevice" style="width: auto;">
+                    <label for="rememberDevice" style="margin: 0; cursor: pointer; font-size: 12px;">Remember this device for 30 days</label>
+                </div>
+                <button type="button" class="btn btn--primary btn--full-width" id="verify2FABtn">Verify Code</button>
+                <div id="twoFAError" class="error-message" style="display: none;"></div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="#" id="backToLoginLink" style="font-size: 12px; color: var(--color-primary);">Back to Login</a>
+                </div>
+            </div>
+            
+            <!-- Alternative Login Methods -->
+            <div id="altLoginMethods" class="login-form" style="display: none;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">Alternative Login Methods</h3>
+                    <p style="font-size: 12px; color: var(--color-text-secondary);">Choose your preferred authentication method</p>
+                </div>
+                
+                <div class="alt-login-tabs">
+                    <button class="alt-tab active" data-tab="credentials">📋 Credentials</button>
+                    <button class="alt-tab" data-tab="magic">✉️ Magic Link</button>
+                    <button class="alt-tab" data-tab="biometric">👆 Biometric</button>
+                    <button class="alt-tab" data-tab="backup">🔑 Backup Code</button>
+                </div>
+                
+                <div class="alt-tab-content">
+                    <!-- Credentials Tab -->
+                    <div id="credentialsTab" class="alt-tab-panel active">
+                        <h4 style="font-size: 14px; margin-bottom: 16px; color: var(--color-text);">Test Account Credentials</h4>
+                        <div class="credentials-table">
+                            <div class="credential-item superadmin">
+                                <div class="credential-header">
+                                    <span class="credential-role">SUPERADMIN</span>
+                                    <span class="credential-status">Active</span>
+                                </div>
+                                <div class="credential-info">
+                                    <div><strong>Email:</strong> <span class="copy-text">admin@platform.com</span></div>
+                                    <div><strong>Password:</strong> <span class="copy-text">Admin@12345</span></div>
+                                    <div><strong>2FA Code:</strong> <span class="copy-text">123456</span></div>
+                                    <div><strong>Permissions:</strong> All</div>
+                                </div>
+                            </div>
+                            
+                            <div class="credential-item admin">
+                                <div class="credential-header">
+                                    <span class="credential-role">ADMIN</span>
+                                    <span class="credential-status">Active</span>
+                                </div>
+                                <div class="credential-info">
+                                    <div><strong>Email:</strong> <span class="copy-text">master@platform.com</span></div>
+                                    <div><strong>Password:</strong> <span class="copy-text">Master@54321</span></div>
+                                    <div><strong>2FA Code:</strong> <span class="copy-text">654321</span></div>
+                                    <div><strong>Permissions:</strong> Full Platform Control</div>
+                                </div>
+                            </div>
+                            
+                            <div class="credential-item manager">
+                                <div class="credential-header">
+                                    <span class="credential-role">MANAGER</span>
+                                    <span class="credential-status">Active</span>
+                                </div>
+                                <div class="credential-info">
+                                    <div><strong>Email:</strong> <span class="copy-text">manager@platform.com</span></div>
+                                    <div><strong>Password:</strong> <span class="copy-text">Manager@99999</span></div>
+                                    <div><strong>2FA Code:</strong> <span class="copy-text">999999</span></div>
+                                    <div><strong>Permissions:</strong> User Management + Compliance</div>
+                                </div>
+                            </div>
+                            
+                            <div class="credential-item operator">
+                                <div class="credential-header">
+                                    <span class="credential-role">OPERATOR</span>
+                                    <span class="credential-status">Active</span>
+                                </div>
+                                <div class="credential-info">
+                                    <div><strong>Email:</strong> <span class="copy-text">operator@platform.com</span></div>
+                                    <div><strong>Password:</strong> <span class="copy-text">Operator@11111</span></div>
+                                    <div><strong>2FA Code:</strong> <span class="copy-text">111111</span></div>
+                                    <div><strong>Permissions:</strong> View Only + Reports</div>
+                                </div>
+                            </div>
+                            
+                            <div class="credential-item legacy">
+                                <div class="credential-header">
+                                    <span class="credential-role">LEGACY</span>
+                                    <span class="credential-status">Active</span>
+                                </div>
+                                <div class="credential-info">
+                                    <div><strong>Email:</strong> <span class="copy-text">swrutherford01@gmail.com</span></div>
+                                    <div><strong>Password:</strong> <span class="copy-text">Rutherfor1055!?</span></div>
+                                    <div><strong>2FA Code:</strong> <span class="copy-text">555555</span></div>
+                                    <div><strong>Permissions:</strong> All (Original Superadmin)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Magic Link Tab -->
+                    <div id="magicTab" class="alt-tab-panel">
+                        <h4 style="font-size: 14px; margin-bottom: 16px;">Email Magic Link</h4>
+                        <p style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px;">Enter your email to receive a one-time login link</p>
+                        <div class="form-group">
+                            <input type="email" id="magicEmail" class="form-control" placeholder="your.email@platform.com">
+                        </div>
+                        <button class="btn btn--primary btn--full-width" id="sendMagicLinkBtn">Send Magic Link</button>
+                        <div id="magicLinkSent" style="display: none; margin-top: 16px; padding: 12px; background: var(--color-bg-3); border-radius: 8px; font-size: 12px;">
+                            <p style="margin-bottom: 8px; color: var(--color-success);">✓ Magic link sent to your email!</p>
+                            <p style="margin-bottom: 8px; color: var(--color-text-secondary);">Click the link below to login (simulated):</p>
+                            <button class="btn btn--sm btn--primary" id="simulateMagicLinkBtn">🔗 Click Magic Link</button>
+                            <p style="margin-top: 8px; font-size: 11px; color: var(--color-text-secondary);">Link expires in: <span id="magicLinkTimer">24:00:00</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Biometric Tab -->
+                    <div id="biometricTab" class="alt-tab-panel">
+                        <h4 style="font-size: 14px; margin-bottom: 16px;">Biometric Authentication</h4>
+                        <p style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 24px;">Use your fingerprint or face to login</p>
+                        <div style="display: flex; gap: 16px; justify-content: center;">
+                            <div class="biometric-option" id="fingerprintBtn">
+                                <div class="biometric-icon">👆</div>
+                                <div class="biometric-label">Fingerprint</div>
+                            </div>
+                            <div class="biometric-option" id="faceBtn">
+                                <div class="biometric-icon">👤</div>
+                                <div class="biometric-label">Face ID</div>
+                            </div>
+                        </div>
+                        <div id="biometricStatus" style="display: none; margin-top: 24px; text-align: center; font-size: 14px;">
+                            <div class="scanning-animation">🔍 Scanning...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Backup Code Tab -->
+                    <div id="backupTab" class="alt-tab-panel">
+                        <h4 style="font-size: 14px; margin-bottom: 16px;">Backup Recovery Code</h4>
+                        <p style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px;">Enter one of your backup codes</p>
+                        <div class="form-group">
+                            <input type="text" id="backupCode" class="form-control" placeholder="BACKUP-001-ABC">
+                        </div>
+                        <button class="btn btn--primary btn--full-width" id="verifyBackupCodeBtn">Verify Code</button>
+                        <div style="margin-top: 16px; padding: 12px; background: var(--color-bg-2); border-radius: 8px; font-size: 11px;">
+                            <p style="margin-bottom: 8px; font-weight: 600;">Valid Backup Codes:</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                                <div>BACKUP-001-ABC</div>
+                                <div>BACKUP-002-DEF</div>
+                                <div>BACKUP-003-GHI</div>
+                                <div>BACKUP-004-JKL</div>
+                                <div>BACKUP-005-MNO</div>
+                                <div>BACKUP-006-PQR</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 24px;">
+                    <a href="#" id="backToMainLoginLink" style="font-size: 12px; color: var(--color-primary);">← Back to Standard Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="mainDashboard" style="display: none;">
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-left">
+                <button id="sidebarToggle" class="icon-btn">☰</button>
+                <div class="logo">🔐 Biometric Platform</div>
+            </div>
+            <div class="nav-center">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search users, transactions, logs..." id="globalSearch">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button id="themeToggle" class="icon-btn" title="Toggle theme">🌙</button>
+                <button id="notificationBtn" class="icon-btn" title="Notifications">
+                    🔔
+                    <span id="notificationBadge" class="badge">3</span>
+                </button>
+                <div class="user-profile">
+                    <span id="userEmail">admin@example.com</span>
+                    <button id="logoutBtn" class="btn btn--sm btn--outline">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="dashboard-layout">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar">
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" data-tab="overview">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="users">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">User Management</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="api">
+                        <span class="nav-icon">🔌</span>
+                        <span class="nav-text">API Configuration</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">System Settings</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="compliance">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Compliance &amp; Audit</span>
+                    </a>
+                    <a href="#" class="nav-item" data-tab="verification">
+                        <span class="nav-icon">🔬</span>
+                        <span class="nav-text">Biometric Verification</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Overview Tab -->
+                <div id="overviewTab" class="tab-content active">
+                    <div class="content-header">
+                        <h2>Dashboard Overview</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="refreshDashboard">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Cards -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">👥</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Total Users</div>
+                                <div class="metric-value" id="totalUsers">0</div>
+                                <div class="metric-change positive">↑ 12.5% from last month</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Active Sessions</div>
+                                <div class="metric-value" id="activeSessions">0</div>
+                                <div class="metric-change positive">↑ 8.3% from yesterday</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💰</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Rewards Distributed</div>
+                                <div class="metric-value" id="rewardsDistributed">$0</div>
+                                <div class="metric-change positive">↑ 15.7% from last week</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💚</div>
+                            <div class="metric-info">
+                                <div class="metric-label">System Health</div>
+                                <div class="metric-value" id="systemHealth">0%</div>
+                                <div class="metric-change positive">All systems operational</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section">
+                        <div class="chart-card">
+                            <h3>User Growth Trend (30 Days)</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="userGrowthChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Verification Success Rate</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="verificationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Recent Activities</h3>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Action</th>
+                                            <th>User ID</th>
+                                            <th>Details</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentActivities"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <div class="status-label">API Services</div>
+                                <div class="status-value">All Online</div>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <div class="status-label">Blockchain</div>
+                                <div class="status-value">Connected</div>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-indicator online"></div>
+                            <div class="status-info">
+                                <div class="status-label">Database</div>
+                                <div class="status-value">Healthy</div>
+                            </div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-indicator warning"></div>
+                            <div class="status-info">
+                                <div class="status-label">Rejection Rate</div>
+                                <div class="status-value">18% (Normal)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management Tab -->
+                <div id="usersTab" class="tab-content">
+                    <div class="content-header">
+                        <h2>User Management</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="exportUsers">📥 Export CSV</button>
+                            <button class="btn btn--sm btn--primary" id="addUser">+ Add User</button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters-bar">
+                        <select id="statusFilter" class="form-control" style="width: 150px;">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                        <select id="levelFilter" class="form-control" style="width: 150px;">
+                            <option value="all">All Levels</option>
+                            <option value="Elite">Elite</option>
+                            <option value="N1">Level N1</option>
+                            <option value="N2">Level N2</option>
+                            <option value="User">User</option>
+                        </select>
+                        <input type="text" id="userSearch" class="form-control" placeholder="Search users..." style="width: 250px;">
+                        <button class="btn btn--sm btn--outline" id="clearFilters">Clear Filters</button>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="card">
+                        <div class="card__body">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="selectAll"></th>
+                                            <th>ID</th>
+                                            <th>Email</th>
+                                            <th>Name</th>
+                                            <th>Level</th>
+                                            <th>Join Date</th>
+                                            <th>Status</th>
+                                            <th>Balance</th>
+                                            <th>Tasks</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTable"></tbody>
+                                </table>
+                            </div>
+                            <div class="pagination" id="usersPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Configuration Tab -->
+                <div id="apiTab" class="tab-content">
+                    <div class="content-header">
+                        <h2>API Configuration</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="testAllAPIs">🧪 Test All APIs</button>
+                            <button class="btn btn--sm btn--primary" id="viewAPILogs">📜 View Logs</button>
+                        </div>
+                    </div>
+
+                    <div id="apiCards" class="api-grid"></div>
+                </div>
+
+                <!-- System Settings Tab -->
+                <div id="settingsTab" class="tab-content">
+                    <div class="content-header">
+                        <h2>System Settings</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="resetSettings">🔄 Reset to Default</button>
+                            <button class="btn btn--sm btn--primary" id="saveSettings">💾 Save Changes</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-sections">
+                        <!-- Basic Configuration -->
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Basic Configuration</h3>
+                                <div class="settings-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">Platform Name</label>
+                                        <input type="text" id="platformName" class="form-control" value="Biometric Reward Platform">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Base Reward Per Task (USD)</label>
+                                        <input type="number" id="baseReward" class="form-control" value="0.01" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Task Duration (seconds)</label>
+                                        <input type="number" id="taskDuration" class="form-control" value="60">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Max Concurrent Users</label>
+                                        <input type="number" id="maxUsers" class="form-control" value="10000000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Maintenance Mode</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="maintenanceMode">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verification Thresholds -->
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Verification Thresholds</h3>
+                                <div class="settings-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">SNR Min (dB)</label>
+                                        <input type="number" id="snrMin" class="form-control" value="60">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">SNR Max (dB)</label>
+                                        <input type="number" id="snrMax" class="form-control" value="95">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Min Cosine Similarity</label>
+                                        <input type="number" id="cosineSim" class="form-control" value="0.82" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Max Euclidean Distance</label>
+                                        <input type="number" id="euclideanDist" class="form-control" value="0.45" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Min Pearson Correlation</label>
+                                        <input type="number" id="pearsonCorr" class="form-control" value="0.78" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Variance Min</label>
+                                        <input type="number" id="varianceMin" class="form-control" value="0.15" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Variance Max</label>
+                                        <input type="number" id="varianceMax" class="form-control" value="0.85" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Min Cross-Sensor Correlation</label>
+                                        <input type="number" id="crossSensorCorr" class="form-control" value="0.65" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Entropy Min</label>
+                                        <input type="number" id="entropyMin" class="form-control" value="3.5" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Entropy Max</label>
+                                        <input type="number" id="entropyMax" class="form-control" value="7.2" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Anti-Spoofing Sensitivity</label>
+                                        <select id="antiSpoofing" class="form-control">
+                                            <option value="low">Low</option>
+                                            <option value="medium" selected>Medium</option>
+                                            <option value="high">High</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Security Settings</h3>
+                                <div class="settings-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">JWT Expiration (hours)</label>
+                                        <input type="number" id="jwtExpiration" class="form-control" value="24">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Max Login Attempts</label>
+                                        <input type="number" id="maxLoginAttempts" class="form-control" value="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Enable 2FA</label>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="enable2FA">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance & Audit Tab -->
+                <div id="complianceTab" class="tab-content">
+                    <div class="content-header">
+                        <h2>Compliance &amp; Audit</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="exportAuditLog">📥 Export Audit Log</button>
+                            <button class="btn btn--sm btn--primary" id="generateReport">📊 Generate Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Audit Filters -->
+                    <div class="filters-bar">
+                        <input type="date" id="auditStartDate" class="form-control" style="width: 180px;">
+                        <input type="date" id="auditEndDate" class="form-control" style="width: 180px;">
+                        <select id="actionFilter" class="form-control" style="width: 200px;">
+                            <option value="all">All Actions</option>
+                            <option value="USER_REGISTERED">User Registered</option>
+                            <option value="API_TOGGLE">API Toggle</option>
+                            <option value="CONSENT_WITHDRAWN">Consent Withdrawn</option>
+                            <option value="VERIFICATION_FAILED">Verification Failed</option>
+                        </select>
+                        <button class="btn btn--sm btn--outline" id="filterAudit">Apply Filters</button>
+                    </div>
+
+                    <!-- Audit Log Table -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Audit Log</h3>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Action</th>
+                                            <th>User ID</th>
+                                            <th>Details</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="auditLogTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GDPR Compliance -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>GDPR Compliance</h3>
+                            <div class="compliance-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Pending Deletion Requests</div>
+                                    <div class="stat-value">3</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Pending Export Requests</div>
+                                    <div class="stat-value">7</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Consent Withdrawals (30d)</div>
+                                    <div class="stat-value">45</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Compliance Score</div>
+                                    <div class="stat-value">98.5%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biometric Verification Tab -->
+                <div id="verificationTab" class="tab-content">
+                    <div class="content-header">
+                        <h2>Biometric Verification</h2>
+                        <div class="header-actions">
+                            <button class="btn btn--sm btn--outline" id="exportVerificationLogs">📥 Export Logs</button>
+                            <button class="btn btn--sm btn--primary" id="manualOverride">🔧 Manual Override</button>
+                        </div>
+                    </div>
+
+                    <!-- Verification Status -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">✓</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Success Rate (24h)</div>
+                                <div class="metric-value" id="verificationSuccess">82%</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">📊</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Total Verifications Today</div>
+                                <div class="metric-value" id="totalVerifications">45,234</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">❌</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Rejection Rate</div>
+                                <div class="metric-value" id="rejectionRate">18%</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-info">
+                                <div class="metric-label">Avg Response Time</div>
+                                <div class="metric-value" id="avgResponseTime">245ms</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Condition Monitoring -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Condition Monitoring</h3>
+                            <div id="conditionMonitoring" class="conditions-grid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Rejection Analysis Chart -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Rejection Analysis by Condition</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="rejectionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verification Logs -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Recent Verification Logs</h3>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Timestamp</th>
+                                            <th>Hash</th>
+                                            <th>SNR</th>
+                                            <th>C1</th>
+                                            <th>C2</th>
+                                            <th>C3</th>
+                                            <th>C4</th>
+                                            <th>C5</th>
+                                            <th>Reward</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="verificationLogsTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-left">
+                <span>© 2025 Biometric Platform</span>
+                <span class="separator">•</span>
+                <span>System Status: <span class="status online">Online</span></span>
+            </div>
+            <div class="footer-right">
+                <span>Server: US-EAST-1</span>
+                <span class="separator">•</span>
+                <span>Uptime: 99.95%</span>
+                <span class="separator">•</span>
+                <span id="currentTime"></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button id="closeNotifications" class="icon-btn">✕</button>
+        </div>
+        <div id="notificationList" class="notification-list"></div>
+    </div>
+
+    <!-- User Details Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Details</h3>
+                <button class="modal-close" onclick="closeUserModal()">✕</button>
+            </div>
+            <div id="userModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
